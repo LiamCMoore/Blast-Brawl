@@ -11,21 +11,42 @@ public class PlayerScript : MonoBehaviour
     public float SpeedSmoothTime = 0.1f;
     public float wallRunMax = 100;
     public Transform CameraT;
-
     public float gravity = 14.0f;
     public float jumpForce = 10.0f;
     public float fallMultiplier = 2.5f;
     public float lowjumpMultiplier = 2f;
 
-    private float wallRunTimer = 0;
-    
+    public float MaxHealth = 100;
+    public float Health = 100;
+    public float Armour = 0;
+    public float ArmourMax = 200;
+    public float Mana = 100;
+    public float ManaMax = 100;
+    public int speed;
+
+
+    //Modifiable Stats
+    public float AttackSpeed;
+    public float MultistrikeTimes;
+    public bool MultiStrike = false;
+    public float AoRRange = 0;
+    public float EnergyCostReduction = 0;
+    public float StatusEffectChance = 0;
+    public float LifeSteal = 0;
+    public float ProjectileSpeed = 0;
+
+    //Player Stat Changes
+    public float JumpAccend = 0;
+    public float GravityNegation = 0;
+    public float DamageIgnoreChance = 0;
+
+
     //JumpPad jump Value
+    private Vector3 inputControls;
+    private float wallRunTimer = 0;
+    private bool DJump = false;
     private float JumpPadJump;
-
-
-
     private float VerticalVelocity;
-    private bool hasJumped = false;
     private bool WallRun = false;
     private Vector3 movement = Vector3.zero;
 
@@ -34,6 +55,7 @@ public class PlayerScript : MonoBehaviour
 
     private void Start()
     {
+        inputControls = new Vector3(0, 0, 0);
         //CameraT = Camera.main.transform;
         Controller = GetComponent<CharacterController>();
     }
@@ -42,6 +64,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (Input.GetButton("Parkour") || Input.GetAxis("Parkour") > 0.5)
         {
+            
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             RaycastHit hit;
             Ray rayRight = new Ray(transform.position, transform.right);
@@ -53,12 +76,14 @@ public class PlayerScript : MonoBehaviour
             if (Physics.Raycast(rayRight, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && VerticalVelocity <= 0)
             {
                 //movement = transform.right;
+                DJump = false;
                 WallRun = true;
             }
             else if (Physics.Raycast(rayLeft, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && VerticalVelocity <= 0)
             {
                 //movement = transform.right;
                 WallRun = true;
+                DJump = false;
             }
             else
             {
@@ -66,8 +91,6 @@ public class PlayerScript : MonoBehaviour
                 print("No Hit");
                 wallRunTimer = 0;
             }
-
-
         }
         else
         {
@@ -78,11 +101,9 @@ public class PlayerScript : MonoBehaviour
         if (Controller.isGrounded)
         {
             WallRun = false;
-            hasJumped = false;
+            DJump = false;
             //apply some gravity to ensure player sticks to grond
             VerticalVelocity = -gravity * Time.deltaTime;
-            //Jump
-            Jump(jumpForce);
         }
         else
         {
@@ -105,20 +126,18 @@ public class PlayerScript : MonoBehaviour
         
         }
 
-        //if (Input.GetAxis("Parkour") > 0)
-        //{
-        //print(WallRun);
-        //}
+        //Jump
+        Jump(jumpForce);
 
 
         //Character Movement//////////////////////////////////////////////////////////
-        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        movement = input.normalized;
 
-        movement = transform.TransformDirection(movement);
-        //If no Input?
-        if (movement != Vector3.zero)
+        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        
+
+        if (input != Vector3.zero)
         {
+            inputControls = input;
             //Increase acceleration for player. If smalller than max speed
             if (Forward_speed < MaxRun_Speed)
             {
@@ -132,7 +151,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (Forward_speed >0)
+            if (Forward_speed > 0)
             {
                 Forward_speed -= Acceleration;
             }
@@ -142,6 +161,15 @@ public class PlayerScript : MonoBehaviour
                 Forward_speed = 0;
             }
         }
+        movement = inputControls.normalized;
+        movement = transform.TransformDirection(movement);
+        //If no Input?
+        if (movement != Vector3.zero)
+        {
+            
+           
+        }
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //If WallRunning, Count down
         if (WallRun == true)
@@ -170,9 +198,6 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-
-        
-
         //Movement
         UpdateMovement();
     }
@@ -185,6 +210,7 @@ public class PlayerScript : MonoBehaviour
         }
         //Get current Velocity from the current forward direction and verical movement
         //movement = transform.forward * Forward_speed + Vector3.up * VerticalVelocity;
+
         Vector3 NewMove =  movement * Forward_speed + Vector3.up * VerticalVelocity;
         //Move the player via Velocity
         Controller.Move(NewMove * Time.deltaTime);
@@ -202,25 +228,37 @@ public class PlayerScript : MonoBehaviour
         print("Collision");
         if (other.gameObject.tag == "JumpPad")
         {
-            if (Controller.isGrounded)
-            {
-                hasJumped = false;
-                Launch(other.gameObject.GetComponent<JumpPadValues>().JumpPadForce);
-            }
+            Launch(other.gameObject.GetComponent<JumpPadValues>().JumpPadForce);
         }
         if (other.gameObject.tag == "MovingPlatform")
         {
             transform.parent = other.transform;
-        }
-            
+        }     
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Health")
+        {
+            Health += (other.gameObject.GetComponent<HealthBoost>().HealthGain);
+        }
+
+        if (other.gameObject.tag == "Armour")
+        {
+            Armour += (other.gameObject.GetComponent<ArmourBoost>().ArmourGain);
+        }
+    }
+
 
     //Jump Code
     void Jump(float JumpVal)
     {
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && Controller.isGrounded == true)
         {
-            hasJumped = true;
+            VerticalVelocity = JumpVal;
+        }
+        if (Input.GetButtonDown("Jump") && (DJump == false) && Controller.isGrounded == false)
+        {
+            DJump = true;
             VerticalVelocity = JumpVal;
         }
 
@@ -228,8 +266,6 @@ public class PlayerScript : MonoBehaviour
 
     void Launch(float JumpVal)
     {
-
-        hasJumped = true;
         VerticalVelocity = JumpVal * (lowjumpMultiplier);
         UpdateMovement();
     }

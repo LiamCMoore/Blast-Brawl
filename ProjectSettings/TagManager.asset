@@ -11,7 +11,9 @@ TagManager:
   - MainCamera3
   - MainCamera4
   - MovingPlatform
-  - PickUp
+  - Armour
+  - Health
+  - EnergyTank
   layers:
   - Default
   - TransparentFX
