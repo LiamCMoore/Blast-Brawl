@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    //Control Set
+    public string Horizontal = "HorizontalP1";
+    public string Vertical = "VerticalP1";
+    public string Parkour = "ParkourP1";
+    public string Jump = "JumpP1";
+    //public string Horizontal = "HorizontalP1";
+
     //Public Variables - Easy to edit stats in editor.
     public float Forward_speed = 100.0f;
     public float MaxRun_Speed = 150.0f;
@@ -24,24 +31,7 @@ public class PlayerScript : MonoBehaviour
     public float ManaMax = 100;
     public int speed;
 
-
-    //Modifiable Stats
-    public float AttackSpeed;
-    public float MultistrikeTimes;
-    public bool MultiStrike = false;
-    public float AoRRange = 0;
-    public float EnergyCostReduction = 0;
-    public float StatusEffectChance = 0;
-    public float LifeSteal = 0;
-    public float ProjectileSpeed = 0;
-
-    //Player Stat Changes
-    public float JumpAccend = 0;
-    public float GravityNegation = 0;
-    public float DamageIgnoreChance = 0;
-
-
-    //JumpPad jump Value
+    //Private Variabler
     private Vector3 inputControls;
     private float wallRunTimer = 0;
     private bool DJump = false;
@@ -49,6 +39,23 @@ public class PlayerScript : MonoBehaviour
     private float VerticalVelocity;
     private bool WallRun = false;
     private Vector3 movement = Vector3.zero;
+
+    //Modifiable Stats
+    private float AttackSpeed;
+    private float MultistrikeTimes;
+    private bool MultiStrike = false;
+    private float AoRRange = 0;
+    private float EnergyCostReduction = 0;
+    private float StatusEffectChance = 0;
+    private float LifeSteal = 0;
+    private float ProjectileSpeed = 0;
+
+    //Player Stat Changes
+    private float JumpAccend = 0;
+    private float GravityNegation = 0;
+    private float DamageIgnoreChance = 0;
+
+
 
     float turnSmoothVelocity;
     CharacterController Controller;
@@ -62,9 +69,9 @@ public class PlayerScript : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButton("Parkour") || Input.GetAxis("Parkour") > 0.5)
+        if (Input.GetButton(Parkour) || Input.GetAxis(Parkour) > 0.5)
         {
-            
+            print("Parkour Held");
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             RaycastHit hit;
             Ray rayRight = new Ray(transform.position, transform.right);
@@ -127,12 +134,12 @@ public class PlayerScript : MonoBehaviour
         }
 
         //Jump
-        Jump(jumpForce);
+        JumpAction(jumpForce);
 
 
         //Character Movement//////////////////////////////////////////////////////////
 
-        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        Vector3 input = new Vector3(Input.GetAxis(Horizontal), 0, Input.GetAxis(Vertical));
         
 
         if (input != Vector3.zero)
@@ -185,13 +192,13 @@ public class PlayerScript : MonoBehaviour
             {
                 wallRunTimer += 1;
             }
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown(Jump))
             {
                 WallRun = false;
                 wallRunTimer = 0;
                 Launch(jumpForce);
             }
-            if (Input.GetButtonUp("Parkour"))
+            if (Input.GetButtonUp(Parkour))
             {
                 WallRun = false;
                 wallRunTimer = 0;
@@ -248,15 +255,14 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-
     //Jump Code
-    void Jump(float JumpVal)
+    void JumpAction(float JumpVal)
     {
-        if (Input.GetButtonDown("Jump") && Controller.isGrounded == true)
+        if (Input.GetButtonDown(Jump) && Controller.isGrounded == true)
         {
             VerticalVelocity = JumpVal;
         }
-        if (Input.GetButtonDown("Jump") && (DJump == false) && Controller.isGrounded == false)
+        if (Input.GetButtonDown(Jump) && (DJump == false) && Controller.isGrounded == false)
         {
             DJump = true;
             VerticalVelocity = JumpVal;

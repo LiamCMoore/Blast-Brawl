@@ -9,6 +9,9 @@ public class GameCamera : MonoBehaviour
     public float sensivityX = 4.0f;
     public float sensivityY = 1.0f;
     public float distance = 5.0f;
+    public string CameraX = "Mouse XP1";
+    public string CameraY = "Mouse YP1";
+
 
     public float rotationSmoothTime = 1.2f;
     Vector3 rotationSmoothVelocity;
@@ -34,8 +37,9 @@ public class GameCamera : MonoBehaviour
     }
     private void LateUpdate()
     {
-        Yaw += Input.GetAxis("Mouse X")* sensivityX;
-        Pitch -= Input.GetAxis("Mouse Y")* sensivityY;
+
+        Yaw += Input.GetAxis(CameraX) * sensivityX;
+        Pitch -= Input.GetAxis(CameraY) * sensivityY;
         Pitch = Mathf.Clamp(Pitch, Y_ANGLE_MIN.x, Y_ANGLE_MIN.y);
 
         currentRotation = Vector3.SmoothDamp((currentRotation), new Vector3(Pitch, Yaw), ref rotationSmoothVelocity, rotationSmoothTime);
