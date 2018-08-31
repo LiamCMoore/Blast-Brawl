@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerScript : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     //Control Set
     public string Horizontal = "HorizontalP1";
@@ -13,9 +13,8 @@ public class PlayerScript : MonoBehaviour
 
     //Public Variables - Easy to edit stats in editor.
     public float Forward_speed = 100.0f;
-    public float MaxRun_Speed = 150.0f;
-    public float Acceleration = 1f;
-    public float SpeedSmoothTime = 0.1f;
+    public float MaxRun_Speed = 6.0f;
+    public float Acceleration = 0.5f;
     public float wallRunMax = 100;
     public Transform CameraT;
     public float gravity = 14.0f;
@@ -23,12 +22,7 @@ public class PlayerScript : MonoBehaviour
     public float fallMultiplier = 2.5f;
     public float lowjumpMultiplier = 2f;
 
-    public float MaxHealth = 100;
-    public float Health = 100;
-    public float Armour = 0;
-    public float ArmourMax = 200;
-    public float Mana = 100;
-    public float ManaMax = 100;
+
     public int speed;
 
     //Private Variabler
@@ -40,20 +34,12 @@ public class PlayerScript : MonoBehaviour
     private bool WallRun = false;
     private Vector3 movement = Vector3.zero;
 
-    //Modifiable Stats
-    private float AttackSpeed;
-    private float MultistrikeTimes;
-    private bool MultiStrike = false;
-    private float AoRRange = 0;
-    private float EnergyCostReduction = 0;
-    private float StatusEffectChance = 0;
-    private float LifeSteal = 0;
-    private float ProjectileSpeed = 0;
+
 
     //Player Stat Changes
     private float JumpAccend = 0;
     private float GravityNegation = 0;
-    private float DamageIgnoreChance = 0;
+    
 
 
 
@@ -71,6 +57,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (Input.GetButton(Parkour) || Input.GetAxis(Parkour) > 0.5)
         {
+            MaxRun_Speed = 20.0f;
             print("Parkour Held");
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             RaycastHit hit;
@@ -103,6 +90,7 @@ public class PlayerScript : MonoBehaviour
         {
             WallRun = false;
             wallRunTimer = 0;
+            MaxRun_Speed = 15.0f;
         }
         //Is the character grounded////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (Controller.isGrounded)
@@ -198,10 +186,11 @@ public class PlayerScript : MonoBehaviour
                 wallRunTimer = 0;
                 Launch(jumpForce);
             }
-            if (Input.GetButtonUp(Parkour))
+            if (Input.GetButtonUp(Parkour) || Input.GetAxis(Parkour) < 0.5)
             {
                 WallRun = false;
                 wallRunTimer = 0;
+                
             }
         }
 
@@ -242,17 +231,11 @@ public class PlayerScript : MonoBehaviour
             transform.parent = other.transform;
         }     
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Health")
-        {
-            Health += (other.gameObject.GetComponent<HealthBoost>().HealthGain);
-        }
 
-        if (other.gameObject.tag == "Armour")
-        {
-            Armour += (other.gameObject.GetComponent<ArmourBoost>().ArmourGain);
-        }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        
     }
 
     //Jump Code

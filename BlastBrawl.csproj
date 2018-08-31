@@ -289,8 +289,9 @@
     <Compile Include="Assets\Scripts\HealthBoost.cs" />
     <Compile Include="Assets\Scripts\JumpPadValues.cs" />
     <Compile Include="Assets\Scripts\MovingPlatform.cs" />
-    <Compile Include="Assets\Scripts\Player\PlayerScript.cs" />
-    <Compile Include="Assets\Scripts\Player\WallRun.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerHealth.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerOffense.cs" />
     <Compile Include="Assets\Scripts\PreGameSetup.cs" />
     <Compile Include="Assets\Scripts\RotateItem.cs" />
   </ItemGroup>

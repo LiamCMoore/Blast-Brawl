@@ -23,6 +23,8 @@ GameObject:
   - component: {fileID: 23888591203062358}
   - component: {fileID: 143344343069476512}
   - component: {fileID: 114157192548543020}
+  - component: {fileID: 114449528975477414}
+  - component: {fileID: 114364721200689612}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -209,34 +211,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34878e591d9b16f449cd4a8d0f7af4bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Horizontal: HorizontalP1
+  Vertical: VerticalP1
+  Parkour: ParkourP1
+  Jump: JumpP1
   Forward_speed: 0
-  MaxRun_Speed: 15
+  MaxRun_Speed: 6
   Acceleration: 0.5
-  SpeedSmoothTime: 0.1
   wallRunMax: 500
   CameraT: {fileID: 0}
   gravity: 30
   jumpForce: 10
   fallMultiplier: 2
   lowjumpMultiplier: 2
+  speed: 0
+--- !u!114 &114364721200689612
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1381996792155010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4027e5a51881708408f480469e33d41a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114449528975477414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1381996792155010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4976ed2a965a97e41ae4f385c83b388b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   MaxHealth: 100
-  Health: 30
+  Health: 100
   Armour: 0
   ArmourMax: 200
   Mana: 100
   ManaMax: 100
-  speed: 0
-  AttackSpeed: 0
-  MultistrikeTimes: 0
-  MultiStrike: 0
-  AoRRange: 0
-  EnergyCostReduction: 0
-  StatusEffectChance: 0
-  LifeSteal: 0
-  ProjectileSpeed: 0
-  JumpAccend: 0
-  GravityNegation: 0
-  DamageIgnoreChance: 0
 --- !u!143 &143344343069476512
 CharacterController:
   m_ObjectHideFlags: 1
@@ -249,8 +265,8 @@ CharacterController:
   serializedVersion: 2
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.01
+  m_SlopeLimit: 32
+  m_StepOffset: 0.5
+  m_SkinWidth: 0.1
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
