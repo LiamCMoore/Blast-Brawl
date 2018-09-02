@@ -30,6 +30,14 @@ public class PlayerHealth : MonoBehaviour {
         }
 
     }
+    void AddDamage(float damage)
+    {
+        Health -= damage;
+        if (Health <=0)
+        {
+            Destroy(this);
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Health")

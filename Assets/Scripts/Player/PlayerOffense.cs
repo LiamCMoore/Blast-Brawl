@@ -54,16 +54,14 @@ public class PlayerOffense : MonoBehaviour {
 
             if (hitColliders[i].CompareTag("Player") && !(hitColliders[i].gameObject == gameObject))
             {
+                //Gonna Change to a less intensive method. needs to send a value as well.
                 hitColliders[i].SendMessage("AddDamage");
             }
             
             i++;
         }
     }
-    void AddDamage()
-    {
-        print("Hit");
-    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, radius);
