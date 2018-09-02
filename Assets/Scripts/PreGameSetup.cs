@@ -14,15 +14,8 @@ public class PreGameSetup : MonoBehaviour {
     public GameObject Player2;
     public GameObject Player3;
     public GameObject Player4;
-
     public int PlayerCount = 1;
-    public int P1_Score;
-    public int P2_Score;
-    public int P3_Score;
-    public int P4_Score;
 
-    public int Score_Modifier;
-    public int Penalties;
 
     // Use this for initialization
     void Start()

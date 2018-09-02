@@ -286,6 +286,7 @@
     <Compile Include="Assets\Scripts\ArmourBoost.cs" />
     <Compile Include="Assets\Scripts\EnergyTank.cs" />
     <Compile Include="Assets\Scripts\GameCamera.cs" />
+    <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\HealthBoost.cs" />
     <Compile Include="Assets\Scripts\JumpPadValues.cs" />
     <Compile Include="Assets\Scripts\MovingPlatform.cs" />

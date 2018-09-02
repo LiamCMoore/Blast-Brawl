@@ -14,6 +14,7 @@ TagManager:
   - Armour
   - Health
   - EnergyTank
+  - RespawnPoint
   layers:
   - Default
   - TransparentFX

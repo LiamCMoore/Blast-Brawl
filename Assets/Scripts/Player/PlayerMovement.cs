@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     //Private Variabler
     private Vector3 inputControls;
     private float wallRunTimer = 0;
-    private bool DJump = false;
+    public bool DJump = false;
     private float JumpPadJump;
     private float VerticalVelocity;
     private bool WallRun = false;
