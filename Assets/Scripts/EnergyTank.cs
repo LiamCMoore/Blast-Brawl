@@ -5,9 +5,9 @@ using UnityEngine;
 public class EnergyTank : MonoBehaviour {
 
     public float EnergyGain = 50;
-    public float RespawnTimeMax = 400;
+    public float RespawnTimeMax = 32;
 
-    private float RespawnTime = 1200;
+    private float RespawnTime = 12;
     private Vector3 StartPosition;
     // Use this for initialization
     void Start()
@@ -20,7 +20,7 @@ public class EnergyTank : MonoBehaviour {
     {
         if (RespawnTime < RespawnTimeMax)
         {
-            RespawnTime++;
+            RespawnTime += 1 * Time.deltaTime; ;
         }
         else
         {

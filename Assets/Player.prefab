@@ -215,10 +215,9 @@ MonoBehaviour:
   Vertical: VerticalP1
   Parkour: ParkourP1
   Jump: JumpP1
-  Forward_speed: 0
   MaxRun_Speed: 6
   Acceleration: 0.5
-  wallRunMax: 500
+  WallRunMax: 100
   CameraT: {fileID: 0}
   gravity: 30
   jumpForce: 10
@@ -236,6 +235,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4027e5a51881708408f480469e33d41a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Melee: MeleeP1
+  Ability1: Ability1P1
+  Ability2: Ability2P1
+  PlayerNumber: 1
 --- !u!114 &114449528975477414
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -248,11 +251,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHealth: 100
-  Health: 100
-  Armour: 0
-  ArmourMax: 200
-  Mana: 100
+  HealthMaxValue: 200
+  ArmourMax: 125
+  ArmourMaxValue: 200
+  HeavyArmour: 0
   ManaMax: 100
+  ShieldMax: 50
+  ShieldRecoveryMax: 7
+  ShieldNegative: 0
 --- !u!143 &143344343069476512
 CharacterController:
   m_ObjectHideFlags: 1

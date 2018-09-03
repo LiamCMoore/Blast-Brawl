@@ -12,43 +12,49 @@ public class PlayerMovement : MonoBehaviour
     //public string Horizontal = "HorizontalP1";
 
     //Public Variables - Easy to edit stats in editor.
-    public float Forward_speed = 100.0f;
+    private float _Forward_speed = 0f;
     public float MaxRun_Speed = 6.0f;
     public float Acceleration = 0.5f;
-    public float wallRunMax = 100;
+    public float WallRunMax = 100;
     public Transform CameraT;
     public float gravity = 14.0f;
     public float jumpForce = 10.0f;
     public float fallMultiplier = 2.5f;
     public float lowjumpMultiplier = 2f;
 
-
     public int speed;
 
     //Private Variabler
-    private Vector3 inputControls;
-    private float wallRunTimer = 0;
-    public bool DJump = false;
-    private float JumpPadJump;
-    private float VerticalVelocity;
-    private bool WallRun = false;
-    private Vector3 movement = Vector3.zero;
-
+    private Vector3 _inputControls;
+    private float _WallRunTimer = 0;
+    private bool _DJump = false;
+    private float _JumpPadJump;
+    private float _VerticalVelocity;
+    private bool _WallRun = false;
+    private Vector3 _movement = Vector3.zero;
+    private bool _freezeMovement = false;
+    private float _freeTimer = 0f;
+    private float _freeTimerMax = 0.5f;
+    private bool freezeMovement = false;
+    private bool _GroundPoundactive = false;
+    private bool _GroundPoundMove = false;
+    private bool _StopFall = false;
 
 
     //Player Stat Changes
     private float JumpAccend = 0;
     private float GravityNegation = 0;
-    
+
 
 
 
     float turnSmoothVelocity;
     CharacterController Controller;
+    Vector3 input;
 
     private void Start()
     {
-        inputControls = new Vector3(0, 0, 0);
+        _inputControls = new Vector3(0, 0, 0);
         //CameraT = Camera.main.transform;
         Controller = GetComponent<CharacterController>();
     }
@@ -58,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButton(Parkour) || Input.GetAxis(Parkour) > 0.5)
         {
             MaxRun_Speed = 20.0f;
-            print("Parkour Held");
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             RaycastHit hit;
             Ray rayRight = new Ray(transform.position, transform.right);
@@ -67,147 +72,174 @@ public class PlayerMovement : MonoBehaviour
             Debug.DrawRay(transform.position, -transform.right);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if (Physics.Raycast(rayRight, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && VerticalVelocity <= 0)
+            if (Physics.Raycast(rayRight, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && _VerticalVelocity <= 0)
             {
-                //movement = transform.right;
-                DJump = false;
-                WallRun = true;
+                //_movement = transform.right;
+                _DJump = false;
+                _WallRun = true;
             }
-            else if (Physics.Raycast(rayLeft, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && VerticalVelocity <= 0)
+            else if (Physics.Raycast(rayLeft, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && _VerticalVelocity <= 0)
             {
-                //movement = transform.right;
-                WallRun = true;
-                DJump = false;
+                //_movement = transform.right;
+                _WallRun = true;
+                _DJump = false;
             }
             else
             {
-                WallRun = false;
-                print("No Hit");
-                wallRunTimer = 0;
+                _WallRun = false;
+                _WallRunTimer = 0;
             }
         }
         else
         {
-            WallRun = false;
-            wallRunTimer = 0;
+            _WallRun = false;
+            _WallRunTimer = 0;
             MaxRun_Speed = 15.0f;
         }
         //Is the character grounded////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (Controller.isGrounded)
         {
-            WallRun = false;
-            DJump = false;
+            _WallRun = false;
+            _DJump = false;
             //apply some gravity to ensure player sticks to grond
-            VerticalVelocity = -gravity * Time.deltaTime;
-        }
-        else
-        {
-            if (WallRun == false)
+            _VerticalVelocity = -gravity * Time.deltaTime;
+            
+            //Handle Ground Pound Movement
+            if (GroundPoundactive == true && Controller.isGrounded == true)
             {
-
-                if (VerticalVelocity < 0)
+                if (_freeTimer <= _freeTimerMax)
                 {
-                    VerticalVelocity -= (gravity * (fallMultiplier) * Time.deltaTime);
+                    _freeTimer += 1 * Time.deltaTime;
+                    _Forward_speed = 0;
                 }
                 else
                 {
-                    VerticalVelocity -= gravity * Time.deltaTime;
+                    freezeMovement = false;
+                    _GroundPoundactive = false;
+                    _GroundPoundMove = false;
+                    _freeTimer = 0;
+                }
+            }
+           
+        }
+        else
+        {
+            if (GroundPoundactive == true )
+            {
+                if (_GroundPoundMove == true)
+                {
+                    transform.Translate(Vector3.forward);
+                }
+                _freezeMovement = true;
+                _Forward_speed = 0;
+            }
+            if (_WallRun == false || _StopFall == false)
+            {
+                if (_VerticalVelocity < 0)
+                {
+                    _VerticalVelocity -= (gravity * (fallMultiplier) * Time.deltaTime);
+                }
+                else
+                {
+                    _VerticalVelocity -= gravity * Time.deltaTime;
                 }
             }
             else
             {
-                VerticalVelocity = 0;
+                _VerticalVelocity = 0;
             }
-        
+
         }
 
         //Jump
         JumpAction(jumpForce);
 
 
-        //Character Movement//////////////////////////////////////////////////////////
+        //Character _movement//////////////////////////////////////////////////////////
+        if (freezeMovement == false)
+        { 
+            input = new Vector3(Input.GetAxis(Horizontal), 0, Input.GetAxis(Vertical));
+        }
 
-        Vector3 input = new Vector3(Input.GetAxis(Horizontal), 0, Input.GetAxis(Vertical));
-        
 
         if (input != Vector3.zero)
         {
-            inputControls = input;
+            _inputControls = input;
             //Increase acceleration for player. If smalller than max speed
-            if (Forward_speed < MaxRun_Speed)
+            if (_Forward_speed < MaxRun_Speed)
             {
-                Forward_speed += Acceleration;
+                _Forward_speed += Acceleration;
             }
             else
             {
                 //Else limit speed to max speed
-                Forward_speed = MaxRun_Speed;
+                _Forward_speed = MaxRun_Speed;
             }
         }
         else
         {
-            if (Forward_speed > 0)
+            if (_Forward_speed > 0)
             {
-                Forward_speed -= Acceleration;
+                _Forward_speed -= Acceleration;
             }
             else
             {
                 //Else limit speed to max speed
-                Forward_speed = 0;
+                _Forward_speed = 0;
             }
         }
-        movement = inputControls.normalized;
-        movement = transform.TransformDirection(movement);
+        _movement = _inputControls.normalized;
+        _movement = transform.TransformDirection(_movement);
         //If no Input?
-        if (movement != Vector3.zero)
+        if (_movement != Vector3.zero)
         {
-            
-           
+
+
         }
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //If WallRunning, Count down
-        if (WallRun == true)
+        //If _WallRunning, Count down
+        if (_WallRun == true)
         {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //print(wallRunTimer);
-            if (wallRunTimer > wallRunMax)
+            //print(__WallRunTimer);
+            if (_WallRunTimer > WallRunMax)
             {
-                WallRun = false;
-                wallRunTimer = 0;
+                _WallRun = false;
+                _WallRunTimer = 0;
             }
             else
             {
-                wallRunTimer += 1;
+                _WallRunTimer += 1;
             }
             if (Input.GetButtonDown(Jump))
             {
-                WallRun = false;
-                wallRunTimer = 0;
+                _WallRun = false;
+                _WallRunTimer = 0;
                 Launch(jumpForce);
             }
             if (Input.GetButtonUp(Parkour) || Input.GetAxis(Parkour) < 0.5)
             {
-                WallRun = false;
-                wallRunTimer = 0;
-                
+                _WallRun = false;
+                _WallRunTimer = 0;
+
             }
         }
 
-        //Movement
+        //_movement
         UpdateMovement();
     }
-    //Updates Movement when called.
-    void UpdateMovement()
+    //Updates _movement when called.
+    public void UpdateMovement()
     {
-        if (WallRun == false)
+        if (_WallRun == false)
         {
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, CameraT.localEulerAngles.y, transform.localEulerAngles.z);
         }
-        //Get current Velocity from the current forward direction and verical movement
-        //movement = transform.forward * Forward_speed + Vector3.up * VerticalVelocity;
+        //Get current Velocity from the current forward direction and verical _movement
+        //_movement = transform.forward * _Forward_speed + Vector3.up * _VerticalVelocity;
 
-        Vector3 NewMove =  movement * Forward_speed + Vector3.up * VerticalVelocity;
+        Vector3 NewMove = _movement * _Forward_speed + Vector3.up * _VerticalVelocity;
         //Move the player via Velocity
         Controller.Move(NewMove * Time.deltaTime);
 
@@ -221,7 +253,6 @@ public class PlayerMovement : MonoBehaviour
     }
     void OnTriggerStay(Collider other)
     {
-        print("Collision");
         if (other.gameObject.tag == "JumpPad")
         {
             Launch(other.gameObject.GetComponent<JumpPadValues>().JumpPadForce);
@@ -229,33 +260,65 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.tag == "MovingPlatform")
         {
             transform.parent = other.transform;
-        }     
+        }
     }
 
 
     private void OnCollisionStay(Collision collision)
     {
-        
+
     }
 
     //Jump Code
     void JumpAction(float JumpVal)
     {
-        if (Input.GetButtonDown(Jump) && Controller.isGrounded == true)
+        if (Input.GetButtonDown(Jump) && Controller.isGrounded == true && GroundPoundactive == false)
         {
-            VerticalVelocity = JumpVal;
+            _VerticalVelocity = JumpVal;
         }
-        if (Input.GetButtonDown(Jump) && (DJump == false) && Controller.isGrounded == false)
+        if (Input.GetButtonDown(Jump) && (_DJump == false) && Controller.isGrounded == false && GroundPoundactive == false)
         {
-            DJump = true;
-            VerticalVelocity = JumpVal;
+            _DJump = true;
+            _VerticalVelocity = JumpVal;
         }
 
     }
 
     void Launch(float JumpVal)
     {
-        VerticalVelocity = JumpVal * (lowjumpMultiplier);
+        _VerticalVelocity = JumpVal * (lowjumpMultiplier);
         UpdateMovement();
     }
+    
+    public float VerticalVelocity
+    {
+        get { return _VerticalVelocity; }
+        set { _VerticalVelocity = value; }
+    }
+    public float Forward_speed
+    {
+        get { return _Forward_speed; }
+        set { _Forward_speed = value; }
+    }
+    public Vector3 movement
+    {
+        get { return _movement; }
+        set { _movement = value; }
+    }
+    public bool GroundPoundactive
+    {
+        get { return _GroundPoundactive; }
+        set { _GroundPoundactive = value; }
+    }
+    public bool GroundPoundMove
+    {
+        get { return _GroundPoundMove; }
+        set { _GroundPoundMove = value; }
+    }
+    public bool StopFall
+    {
+        get { return _StopFall; }
+        set { _StopFall = value; }
+    }
+
 }

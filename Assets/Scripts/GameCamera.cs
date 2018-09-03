@@ -17,7 +17,7 @@ public class GameCamera : MonoBehaviour
     public string CameraY = "Mouse YP1";
 
     public float RespawnTimer = 0;
-    public float RespawnTimerMax = 100;
+    public float RespawnTimerMax = 15;
 
     public float rotationSmoothTime = 1.2f;
     Vector3 rotationSmoothVelocity;
@@ -65,7 +65,7 @@ public class GameCamera : MonoBehaviour
             //Respawn Timer
             if (RespawnTimer < RespawnTimerMax)
             {
-                RespawnTimer += 1;
+                RespawnTimer += 1 * Time.deltaTime; ;
             }
             else
             {
