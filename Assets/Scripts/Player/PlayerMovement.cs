@@ -76,30 +76,30 @@ public class PlayerMovement : MonoBehaviour
             {
                 //_movement = transform.right;
                 _DJump = false;
-                _WallRun = true;
+                _StopFall = true;
             }
             else if (Physics.Raycast(rayLeft, out hit) && hit.collider.CompareTag("Floor") && hit.distance < 1 && _VerticalVelocity <= 0)
             {
                 //_movement = transform.right;
-                _WallRun = true;
+                _StopFall = true;
                 _DJump = false;
             }
             else
             {
-                _WallRun = false;
+                _StopFall = false;
                 _WallRunTimer = 0;
             }
         }
         else
         {
-            _WallRun = false;
+            _StopFall = false;
             _WallRunTimer = 0;
             MaxRun_Speed = 15.0f;
         }
         //Is the character grounded////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (Controller.isGrounded)
         {
-            _WallRun = false;
+            _StopFall = false;
             _DJump = false;
             //apply some gravity to ensure player sticks to grond
             _VerticalVelocity = -gravity * Time.deltaTime;
@@ -133,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
                 _freezeMovement = true;
                 _Forward_speed = 0;
             }
-            if (_WallRun == false || _StopFall == false)
+            if (_StopFall == false )
             {
                 if (_VerticalVelocity < 0)
                 {
@@ -199,13 +199,13 @@ public class PlayerMovement : MonoBehaviour
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //If _WallRunning, Count down
-        if (_WallRun == true)
+        if (_StopFall == true)
         {
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //print(__WallRunTimer);
             if (_WallRunTimer > WallRunMax)
             {
-                _WallRun = false;
+                _StopFall = false;
                 _WallRunTimer = 0;
             }
             else
@@ -214,13 +214,13 @@ public class PlayerMovement : MonoBehaviour
             }
             if (Input.GetButtonDown(Jump))
             {
-                _WallRun = false;
+                _StopFall = false;
                 _WallRunTimer = 0;
                 Launch(jumpForce);
             }
             if (Input.GetButtonUp(Parkour) || Input.GetAxis(Parkour) < 0.5)
             {
-                _WallRun = false;
+                _StopFall = false;
                 _WallRunTimer = 0;
 
             }
@@ -255,6 +255,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "JumpPad")
         {
+            freezeMovement = false;
+            _GroundPoundactive = false;
+            _GroundPoundMove = false;
+            _StopFall = false;
+            GetComponent<PlayerOffense>().GroundPoundAttack = false;
+
             Launch(other.gameObject.GetComponent<JumpPadValues>().JumpPadForce);
         }
         if (other.gameObject.tag == "MovingPlatform")

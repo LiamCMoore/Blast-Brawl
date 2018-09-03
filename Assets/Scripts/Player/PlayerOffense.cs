@@ -18,7 +18,7 @@ public class PlayerOffense : MonoBehaviour {
     private float LifeSteal = 0;
     private float ProjectileSpeed = 0;
     private float DamageIgnoreChance = 0;
-    private bool GroundPoundAttack = false;
+    public bool GroundPoundAttack = false;
     private float GroundPoundDamage = 15f;
     public int PlayerNumber = 1;
 
@@ -48,7 +48,7 @@ public class PlayerOffense : MonoBehaviour {
         if (Controller.isGrounded == false && Input.GetButtonDown(Melee))
         {
             GroundPoundAttack = true;
-            
+            attackPause = 0;
             GetComponent<PlayerMovement>().GroundPoundactive = true;
         }
         if (GroundPoundAttack == true && GetComponent<PlayerMovement>().GroundPoundMove == false)
@@ -76,7 +76,7 @@ public class PlayerOffense : MonoBehaviour {
         if (GetComponent<PlayerMovement>().GroundPoundactive == true && GetComponent<PlayerMovement>().StopFall == false)
         {
             attackPause = 0;
-            GetComponent<PlayerMovement>().VerticalVelocity = -13f;
+            GetComponent<PlayerMovement>().VerticalVelocity -= 2f;
             CencelGroundPound();
             RaycastHit hit;
             Ray rayForward = new Ray(transform.position, transform.forward);
@@ -103,6 +103,8 @@ public class PlayerOffense : MonoBehaviour {
             {
                 //Gonna Change to a less intensive method. needs to send a value as well.
                 hitColliders[i].GetComponent<PlayerHealth>().AddDamage(GroundPoundDamage,this.gameObject);
+
+                hitColliders[i].GetComponent<PlayerHealth>().transform.Translate(Vector3.forward);
                 if (hitColliders[i].GetComponent<PlayerHealth>().Health <= 0)
                 {
                     switch (PlayerNumber)
@@ -144,7 +146,7 @@ public class PlayerOffense : MonoBehaviour {
     //Ground Pound Attack
     void CencelGroundPound()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 0.5f);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1f);
         int i = 0;
         while (i < hitColliders.Length)
         {
@@ -152,6 +154,9 @@ public class PlayerOffense : MonoBehaviour {
             if (hitColliders[i].CompareTag("Floor") && Controller.isGrounded == false)
             {
                 GetComponent<PlayerMovement>().GroundPoundMove = false;
+                GetComponent<PlayerMovement>().StopFall = false;
+                attackPause = 0;
+                GroundPoundAttack = false;
             }
             //Next in Array of objects in Sphere Overlay
             i++;
