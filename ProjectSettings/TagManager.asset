@@ -14,6 +14,8 @@ TagManager:
   - Armour
   - Health
   - EnergyTank
+  - RespawnPoint
+  - KillPlane
   layers:
   - Default
   - TransparentFX
