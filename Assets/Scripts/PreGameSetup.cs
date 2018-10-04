@@ -9,14 +9,13 @@ public class PreGameSetup : MonoBehaviour {
     public Camera Cam2;
     public Camera Cam3;
     public Camera Cam4;
-    public int PlayerCount = 1;
-    public int P1_Score;
-    public int P2_Score;
-    public int P3_Score;
-    public int P4_Score;
 
-    public int Score_Modifier;
-    public int Penalties;
+    public GameObject Player1;
+    public GameObject Player2;
+    public GameObject Player3;
+    public GameObject Player4;
+    public int PlayerCount = 1;
+
 
     // Use this for initialization
     void Start()
@@ -32,6 +31,9 @@ public class PreGameSetup : MonoBehaviour {
             case 1:
                 {
                     //Camera.Player1Cam.active = false;
+                    Player2.SetActive(true);
+                    Player3.SetActive(false);
+                    Player4.SetActive(false);
                     Cam3.enabled = false;
                     Cam4.enabled = false;
                     Cam1.enabled = true;
@@ -48,9 +50,14 @@ public class PreGameSetup : MonoBehaviour {
             //If Game is 3 Player
             case 2:
                 {
+                    Player2.SetActive(true);
+                    Player3.SetActive(true);
+                    Player4.SetActive(false);
+
                     Cam3.enabled = true;
                     Cam4.enabled = false;
                     Cam1.enabled = true;
+                   
                     Cam2.enabled = true;
                     if (Cam1.enabled == true)
                     {
@@ -68,6 +75,9 @@ public class PreGameSetup : MonoBehaviour {
             //If Game is 4 Player
             case 3:
                 {
+                    Player2.SetActive(true);
+                    Player3.SetActive(true);
+                    Player4.SetActive(true);
                     Cam3.enabled = true;
                     Cam4.enabled = true;
                     Cam1.enabled = true;
@@ -96,6 +106,9 @@ public class PreGameSetup : MonoBehaviour {
                     {
                         Cam1.rect = new Rect(0, 0, 1f, 1f);
                     }
+                    Player2.SetActive(false);
+                    Player3.SetActive(false);
+                    Player4.SetActive(false);
                     Cam3.enabled = false;
                     Cam4.enabled = false;
                     Cam1.enabled = true;

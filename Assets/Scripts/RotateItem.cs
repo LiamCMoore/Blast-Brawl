@@ -8,7 +8,7 @@ public class RotateItem : MonoBehaviour {
     public bool Reverse = false;
     private float drop = 0;
     public float DropSpeed = 0.1f;
-    public float maxDrop = 5;
+    public float maxDrop =1;
     private bool dropReverse = false;
     // Use this for initialization
     void Start () {
@@ -22,11 +22,11 @@ public class RotateItem : MonoBehaviour {
 	void Update ()
     {
         transform.Rotate(Vector3.up, RotSpeed);
-        if (drop > maxDrop)
+        if (drop >= maxDrop)
         {
             dropReverse = false;
         }
-        if (drop < -maxDrop)
+        if (drop <= -maxDrop)
         {
             dropReverse = true;
         }
@@ -38,6 +38,6 @@ public class RotateItem : MonoBehaviour {
         {
             drop += DropSpeed;
         }
-        transform.Translate(Vector3.up* drop * Time.deltaTime);
+        transform.Translate(Vector3.up* (drop * Time.deltaTime));
     }
 }

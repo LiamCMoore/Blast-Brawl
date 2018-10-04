@@ -5,9 +5,10 @@ using UnityEngine;
 public class ArmourBoost : MonoBehaviour {
 
     public float ArmourGain = 25;
-    public float RespawnTimeMax = 400;
+    public float RespawnTimeMax = 32;
+    public bool Heavy = false;
 
-    private float RespawnTime = 1200;
+    private float RespawnTime = 12;
     private Vector3 StartPosition;
     // Use this for initialization
     void Start()
@@ -20,7 +21,7 @@ public class ArmourBoost : MonoBehaviour {
     {
         if (RespawnTime < RespawnTimeMax)
         {
-            RespawnTime++;
+            RespawnTime += 1 * Time.deltaTime;
         }
         else
         {
