@@ -6,12 +6,14 @@ public class PlayerOffense : MonoBehaviour {
 
     //Modifiable Stats
     public string Melee = "MeleeP1";
+    public string GroundPound = "GroundPoundP1";
     public string Ability1 = "Ability1P1";
     public string Ability2 = "Ability2P1";
 
     private float AttackSpeed;
     private float MultistrikeTimes;
     private bool MultiStrike = false;
+    private float meleeDistance = 5f;
     private float AoRRange = 0;
     private float EnergyCostReduction = 0;
     private float StatusEffectChance = 0;
@@ -19,6 +21,9 @@ public class PlayerOffense : MonoBehaviour {
     private float ProjectileSpeed = 0;
     private float DamageIgnoreChance = 0;
     public bool GroundPoundAttack = false;
+
+
+
     private float GroundPoundDamage = 15f;
     public int PlayerNumber = 1;
 
@@ -45,7 +50,22 @@ public class PlayerOffense : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (Controller.isGrounded == false && Input.GetButtonDown(Melee))
+        if (Input.GetButtonDown(Melee))
+        {
+            print("Attack");
+            RaycastHit Attack;
+            Ray rayForward = new Ray(transform.position, transform.forward);
+
+            Debug.DrawRay(transform.position, transform.forward);
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (Physics.Raycast(rayForward, out Attack) && Attack.collider.CompareTag("Player") && !(Attack.collider.gameObject == gameObject) && Attack.distance < meleeDistance)
+            {
+                Attack.collider.GetComponent<PlayerHealth>().AddDamage(50, this.gameObject);
+            }
+        }
+
+            if (Controller.isGrounded == false && Input.GetButtonDown(GroundPound))
         {
             GroundPoundAttack = true;
             attackPause = 0;
@@ -69,7 +89,7 @@ public class PlayerOffense : MonoBehaviour {
         }
         if (GroundPoundAttack == true && Controller.isGrounded == true)
         {
-            GroundPound(transform.position, radius);
+            GroundPoundAction(transform.position, radius);
             GroundPoundAttack = false;
         }
 
@@ -92,7 +112,7 @@ public class PlayerOffense : MonoBehaviour {
         
     }
     //Ground Pound Attack
-    void GroundPound(Vector3 center, float radius)
+    void GroundPoundAction(Vector3 center, float radius)
     {
         Collider[] hitColliders = Physics.OverlapSphere(center, radius);
         int i = 0;
